@@ -91,7 +91,7 @@ models_ind = odds.ratio(reg_ind_fina)
 stargazer(reg_ind_fina, type = "text")
 
 # 3.2 For each region
-##3.2.1 Labé region
+##3.2.1 LabÃ© region
 design_sample_labe = subset(design_sample, region=="Labe")
 reg_in_labe = svyglm(net_use ~ urb + rooms + hh_size + u5_hh + Marital + sex + Edu + head_age + wealth + age, 
                      design = design_sample_labe, family = binomial())
@@ -126,7 +126,7 @@ reg_in_mam = svyglm(net_use ~ urb + rooms + hh_size + Marital +
 odds.ratio(reg_in_mam)
 tab_model(reg_in_labe)
 
-## 3.2.3 Boké region
+## 3.2.3 BokÃ© region
 design_sample_bok = subset(design_sample, region=="Boke")
 reg_in_bok = svyglm(net_use ~ urb + rooms + hh_size + u5_hh + Marital + sex + Edu + head_age + wealth + age, 
                     design = design_sample_bok, family = binomial())
@@ -191,7 +191,7 @@ odds.ratio(reg_in_kan)
 tab_model(reg_in_kan)
 
 
-## 3.2.7 N'zérékoré region
+## 3.2.7 N'zÃ©rÃ©korÃ© region
 design_sample_zere = subset(design_sample, region=="Nzerekore")
 reg_in_zere = svyglm(net_use ~ urb + rooms + hh_size + u5_hh + Marital + sex + Edu + head_age + wealth + age, 
                      design = design_sample_zere, family = binomial())
