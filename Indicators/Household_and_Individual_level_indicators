@@ -127,3 +127,4 @@ data_PR_HR = data_PR_HR %>%
 #dplyr::mutate(accessnet1 = ifelse(accessnet >1, 1, 0))
 
 write.csv(data_PR_HR, '/Users/ousmanediallo/Box/NU-malaria-team/data/guinea_dhs/data_analysis/master/data/data_PR/data_PR_HR.csv')
+
