@@ -1,11 +1,12 @@
-##  Take account survey design
+#1.  Read the ITN use among those with access file
 data_use = read.csv('C:/Users/ode3599/Box/NU-malaria-team/data/guinea_dhs/data_analysis/master/data/data_PR/data_use_among_those_with_access_cleaning.csv')
+#2.  Take account survey design
 
 data_use$wt = data_use$hv005/1000000
 
 design_sample = svydesign(ids = ~hv021, data = data_use, strata = ~hv022, weights = ~wt, num_p=1, nest = T)
 
-## 1. Bivariate analysis and Rao-scott chisquare test for ITN use among those with access
+## 3. Bivariate analysis and Rao-scott chisquare test for ITN use among those with access
 
 explanatory_vars_ind <- c("wealth", "sex", "urb", "u5_hh", "rooms", "hh_size", "Edu", "head_age", "Marital", "age", "preg", "region")
 
@@ -17,7 +18,7 @@ for(i in 1:length(explanatory_vars_ind)){
 }
 
 
-## 2.1 Univariate analysis of different risk factors for ITN use at the country level 
+## 4.1 Univariate analysis of different risk factors for ITN use at the country level 
 
 models_ind <- explanatory_vars_ind %>%       # begin with variables of interest
   str_c("net_use ~ ", .) %>%         # combine each variable into formula ("outcome ~ variable of interest")
@@ -44,7 +45,7 @@ models_ind <- explanatory_vars_ind %>%       # begin with variables of interest
 
 models_ind
 
-## 2.2 Univariate analysis of different risk factors for ITN use at the regional level
+## 4.2 Univariate analysis of different risk factors for ITN use at the regional level
 
 explanatory_vars_ind <- c("wealth", "sex", "urb", "u5_hh", "rooms", "hh_size", "Edu", "head_age", "Marital", "age", "preg") ## remove region in the explanatory variables
 region_vars = c("Boke", "Kankan", "Kindia", "Mamou", "Labe", "Faranah", "Conakry", "Nzerekore")
@@ -74,8 +75,8 @@ models_region_ind = function(survey.design, region_vars){
   
 }
 
-##3 Risk factors estimations using multivariate analysis, Akaike Information Criterion use to select the best models (stepAIC)
-# 3.1 Whole country
+#5. Risk factors estimations using multivariate analysis, Akaike Information Criterion use to select the best models (stepAIC)
+# 5.1 Whole country
 ###
 reg_ind = svyglm(net_use~ urb + rooms + hh_size + u5_hh + Marital + sex + Edu + head_age + wealth + age + preg + region,
                  design = design_sample, family = binomial())
@@ -90,8 +91,8 @@ models_ind = odds.ratio(reg_ind_fina)
 
 stargazer(reg_ind_fina, type = "text")
 
-# 3.2 For each region
-##3.2.1 Labé region
+# 5.2 For each region
+#5.2.1 Labé region
 design_sample_labe = subset(design_sample, region=="Labe")
 reg_in_labe = svyglm(net_use ~ urb + rooms + hh_size + u5_hh + Marital + sex + Edu + head_age + wealth + age, 
                      design = design_sample_labe, family = binomial())
@@ -109,7 +110,7 @@ odds.ratio(reg_in_labe)
 tab_model(reg_in_labe)
 
 
-## 3.2.2 Mamou region
+#5.2.2 Mamou region
 design_sample_mamou = subset(design_sample, region=="Mamou")
 reg_in_mam = svyglm(net_use ~ urb + rooms + hh_size + u5_hh + Marital + sex + Edu + head_age + wealth + age, 
                     design = design_sample_mamou, family = binomial())
@@ -126,7 +127,7 @@ reg_in_mam = svyglm(net_use ~ urb + rooms + hh_size + Marital +
 odds.ratio(reg_in_mam)
 tab_model(reg_in_labe)
 
-## 3.2.3 Boké region
+#5.2.3 Boké region
 design_sample_bok = subset(design_sample, region=="Boke")
 reg_in_bok = svyglm(net_use ~ urb + rooms + hh_size + u5_hh + Marital + sex + Edu + head_age + wealth + age, 
                     design = design_sample_bok, family = binomial())
@@ -143,7 +144,7 @@ reg_in_bok = svyglm(net_use ~ urb + rooms + hh_size + Marital +
 odds.ratio(reg_in_bok)
 tab_model(reg_in_bok)
 
-## 3.2.4 Kindia region
+#5.2.4 Kindia region
 design_sample_kin = subset(design_sample, region=="Kindia")
 reg_in_kin = svyglm(net_use ~ urb + rooms + hh_size + u5_hh + Marital + sex + Edu + head_age + wealth + age, 
                     design = design_sample_kin, family = binomial())
@@ -157,7 +158,7 @@ reg_in_kin = svyglm(net_use ~ urb + hh_size + Marital + head_age +
 
 tab_model(reg_in_kin)
 
-## 3.2.5 Faranah region
+#5.2.5 Faranah region
 design_sample_fara = subset(design_sample, region=="Faranah")
 reg_in_fara = svyglm(net_use ~ urb + rooms + hh_size + u5_hh + Marital + sex + Edu + head_age + wealth + age, 
                      design = design_sample_fara, family = binomial())
@@ -174,7 +175,7 @@ reg_in_fara = svyglm(net_use ~ urb + rooms + Marital + sex + wealth + age,
 
 odds.ratio(reg_in_fara)
 
-## 3.2.6 Kankan region
+#5.2.6 Kankan region
 design_sample_kan = subset(design_sample, region=="Kankan")
 reg_in_kan = svyglm(net_use ~ urb + rooms + hh_size + u5_hh + Marital + sex + Edu + head_age + wealth + age, 
                     design = design_sample_kan, family = binomial())
@@ -191,7 +192,7 @@ odds.ratio(reg_in_kan)
 tab_model(reg_in_kan)
 
 
-## 3.2.7 N'zérékoré region
+#5.2.7 N'zérékoré region
 design_sample_zere = subset(design_sample, region=="Nzerekore")
 reg_in_zere = svyglm(net_use ~ urb + rooms + hh_size + u5_hh + Marital + sex + Edu + head_age + wealth + age, 
                      design = design_sample_zere, family = binomial())
@@ -209,7 +210,7 @@ reg_in_zere = svyglm(net_use ~ u5_hh + Marital + Edu + head_age +
 
 odds.ratio(reg_in_zere)
 
-## 3.2.8 Conakry region (remove place of residence in Conakry)
+#5.2.8 Conakry region (remove place of residence in Conakry)
 design_sample_cona = subset(design_sample, region=="Conakry")
 reg_in_cona = svyglm(net_use ~rooms + hh_size + Marital + sex + Edu + head_age + age, 
                      design = design_sample_cona, family = binomial())
