@@ -1,9 +1,12 @@
-## Take account survey design
+#1. Read the ITN ownserhip datasets
 hh_ex = read.csv('C:/Users/ode3599/Box/NU-malaria-team/data/guinea_dhs/data_analysis/master/data/data_PR/data_HR.csv')
+#2. Take account survey design for the analysis
+
 hh_ex$wt = hh_ex$hv005/1000000
 design_sample_hh= svydesign(ids = ~hv021, data = hh_ex, strata = ~hv022, weights = ~wt, num_p=1, nest = T)
 
-## 1. Bivariate analysis and Rao-scott chisquare test for Household ITN ownership
+
+## 3. Bivariate analysis and Rao-scott chisquare test for Household ITN ownership
 
 explanatory_vars <- c("wealth", "sex", "urb", "Num_childre", "region", "rooms", "hh_size", "Edu", "head_age", "Marital")
 
@@ -15,7 +18,7 @@ for(i in 1:length(explanatory_vars)){
 }
 
 
-## 2.1 Univariate analysis of different risk factors for ITN ownership at the country level 
+## 4.1 Univariate analysis of different risk factors for ITN ownership at the country level 
 
 models <- explanatory_vars %>%       # begin with variables of interest
   str_c("HH_at_least_one ~ ", .) %>%         # combine each variable into formula ("outcome ~ variable of interest")
@@ -42,7 +45,7 @@ models <- explanatory_vars %>%       # begin with variables of interest
 
 models
 
-## 2.2 Univariate analysis of different risk factors for ITN ownership at the regional level 
+## 4.2 Univariate analysis of different risk factors for ITN ownership at the regional level 
 
 region_vars = c("Boké", "Kankan", "Kindia", "Mamou", "Labé", "Faranah", "Conakry", "Nzerekore")
 models_region = function(survey.design, region_vars){
@@ -71,8 +74,8 @@ models_region = function(survey.design, region_vars){
   
 }
 
-##3 Risk factors estimations using multivariate analysis, Akaike Information Criterion use to select the best models (stepAIC)
-# 3.1 Whole country
+#5. Risk factors estimations using multivariate analysis, Akaike Information Criterion use to select the best models (stepAIC)
+# 5.1 Whole country
 reg_hh = svyglm(HH_at_least_one ~ urb + rooms + hh_size + Num_childre + Marital + sex + Edu + head_age + wealth + region,
                 design = design_sample_hh, family = binomial())
 
@@ -81,8 +84,8 @@ StepAIC(reg_hh)
 reg_hh_final = svyglm(HH_at_least_one ~ urb + hh_size +  Marital +  Edu + head_age + wealth + region,
                       design = design_sample_hh, family = binomial())
 odds.ratio(reg_hh_final)
-# 3.2 For each region
-# 3.2.1 Boké region
+# 5.2 For each region
+# 5.2.1 Boké region
 hh_design_boke = subset(design_sample_hh, region=="Boke")
 
 reg_boke = svyglm(HH_at_least_one~ urb + rooms + hh_size + Num_childre + Marital + sex + Edu + head_age + wealth,
@@ -97,7 +100,7 @@ reg_boke_fina = svyglm(HH_at_least_one ~ urb + rooms + hh_size + Num_childre + M
 odds.ratio(reg_boke_fina)
 
 
-# 3.2.2 Kindia region
+# 5.2.2 Kindia region
 hh_design_kin = subset(design_sample_hh, region=="Kindia")
 
 reg_kin = svyglm(HH_at_least_one~ urb + rooms + hh_size + Num_childre + Marital + sex + Edu + head_age + wealth,
@@ -112,7 +115,7 @@ reg_kind_fina = svyglm(HH_at_least_one ~ urb + Num_childre + Marital + sex + wea
 odds.ratio(reg_kind_fina)
 
  
-# 3.2.3 Faranah region
+# 5.2.3 Faranah region
 hh_design_fara = subset(design_sample_hh, region=="Faranah")
 
 reg_fara = svyglm(HH_at_least_one~ urb + rooms + hh_size + Num_childre + Marital + sex + Edu + head_age + wealth,
@@ -127,7 +130,7 @@ reg_fara_fina = svyglm(HH_at_least_one ~ urb + rooms + hh_size + Marital +
 
 odds.ratio(reg_fara_fina)
 
-# 3.2.4 Kankan region
+# 5.2.4 Kankan region
 
 hh_design_kan = subset(design_sample_hh, region=="Kankan")
 
@@ -142,7 +145,7 @@ reg_kan_fina = svyglm(HH_at_least_one ~ hh_size + Num_childre, design = hh_desig
 
 odds.ratio(reg_kan_fina)
 
-# 3.2.5 Labé region
+# 5.2.5 Labé region
 hh_design_labe = subset(design_sample_hh, region=="Labe")
 
 reg_labe = svyglm(HH_at_least_one~ urb + rooms + hh_size + Num_childre + sex + Edu + head_age + wealth,
@@ -157,7 +160,7 @@ reg_labe_fina = svyglm(HH_at_least_one ~ head_age + wealth, design = hh_design_k
 odds.ratio(reg_labe_fina)
 
 
-# 3.2.6 Mamou region
+# 5.2.6 Mamou region
 hh_design_mamou = subset(design_sample_hh, region=="Mamou")
 
 reg_mam = svyglm(HH_at_least_one~ urb + rooms + hh_size + Num_childre + sex + Edu + head_age + wealth,
@@ -173,7 +176,7 @@ odds.ratio(reg_mam_fina)
 
 
 
-# 3.2.7 N'zérékoré region
+# 5.2.7 N'zérékoré region
 hh_design_zere = subset(design_sample_hh, region=="Nzerekore")
 
 reg_zere = svyglm(HH_at_least_one~ urb + rooms + hh_size + Num_childre + sex + Edu + head_age + wealth,
@@ -188,7 +191,7 @@ reg_zere_fina = svyglm(HH_at_least_one ~ Edu + hh_size + urb + wealth, design = 
 odds.ratio(reg_zere_fina)
 
 
-# 3.2.8 Conakry region
+# 5.2.8 Conakry region
 hh_design_cona = subset(design_sample_hh, region=="Conakry")
 
 reg_cona = svyglm(HH_at_least_one~rooms + hh_size + Num_childre + sex + Edu + head_age + wealth,
