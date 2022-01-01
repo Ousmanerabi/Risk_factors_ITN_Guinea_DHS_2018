@@ -22,240 +22,15 @@ library(wesanderson)
 library(gridExtra)
 library(gcookbook)
 library(tidyr)
-### Directories
-user <- Sys.getenv("USERNAME")
-if ("mambrose" %in% user) {
-  user_path <- file.path("C:/Users", user)
-  Drive <- file.path(gsub("[\\]", "/", gsub("Documents", "", Sys.getenv("HOME"))))
-  NuDir <- file.path(Drive, "NU-malaria-team")
-  NGDir <-file.path(NuDir, "data", "nigeria_dhs",  "data_analysis")
-  DataDir <-file.path(NGDir, "data")
-  ResultDir <-file.path(NGDir, "results")
-  SrcDir <- file.path(NGDir, "src", "DHS")
-  BinDir <- file.path(NGDir, "bin")
-} else {
-  Drive <- file.path(gsub("[\\]", "/", gsub("Documents", "", Sys.getenv("HOME"))))
-  NuDir <- file.path(Drive, "Box", "NU-malaria-team")
-  CliDir <- file.path(NuDir, "data", "guinea_climate")
-  GNDir <-file.path(NuDir, "data", "guinea_dhs",  "data_analysis", "master")
-  DataDir <-file.path(GNDir, "data")
-  ResultDir <-file.path(GNDir, "results")
-  BinDir <- file.path(GNDir, "bin")
-  SrcDir <- file.path(GNDir, "src", "DHS")
-  VarDir <- file.path(SrcDir, "1_variables_scripts")
-  ProjectDir <- file.path(NuDir, "projects", "hbhi_guinea")
-  SimDir <- file.path(ProjectDir, 'simulation_input')
-}
 
-
-## -----------------------------------------
-### Required functions and settings
-## -----------------------------------------
-
-#source(file.path(SrcDir, "Fonctions_nettoyage.R"))
-
-
-###### Import dhs, climate, entological and routine data
-#dhs <-read.files( ".*GNPR.*\\.DTA", DataDir, read_dta)
-
-# HDshp <- readOGR(file.path(DataDir,"guinea_shapefiles/Guinea_Health_District"), layer ="GIN_adm2", use_iconv=TRUE, encoding= "UTF-8")
-# 
-# HD_sf <- st_as_sf(HDshp)
-# 
-# Gn_names <- read.csv(file.path(BinDir,"names/GN_shp_pop_names.csv")) %>% dplyr::select(-X)
-# 
-# 
-# GN_clean_names <- left_join(HD_sf, Gn_names, by=c("NAME_2" = "DS_shape")) 
-# head(GN_clean_names)
-# 
-# 
-# # rep DS file
-# rep_DS <- read.csv(file.path(BinDir, "rep_DS/representative_DS_orig60clusters.csv")) %>% dplyr::select(-X)
-# 
-# library(nngeo)
-# # cluster locations 
-# GNshplist<-read.files("*FL.*\\.shp$", DataDir, shapefile)
-# GNshplist <- lapply(GNshplist, st_as_sf)
-# key_list <- lapply(GNshplist, function(x) x %>% st_join(GN_clean_names, join = st_nn, maxdist = 10000))
-# 
-# dhs = list(dhs[[3]], dhs[[4]])
-# dhs <- lapply(dhs, subset, hv103 == 1)
-# 
-# GNshplist<- list(GNshplist[[3]],GNshplist[[4]])
-# GN_ID <- lapply(GNshplist, "[[", "DHSCLUST")#QA this
-# key_list <- list(key_list[[3]], key_list[[4]])
-# key_list <- Map(cbind, key_list, hv001 = GN_ID)
-# dhs <- map2(dhs, key_list, left_join)
-# 
-# 
-# 
-# ### Import climate and Adjusted Incidence
-# climate_data = read.csv("C:/Users/ode3599/Box/NU-malaria-team/data/guinea_climate/Guinea_long_format.csv")
-# 
-# #routine_data = read.csv2("/Users/ousmanediallo/Box/NU-malaria-team/data/guinea_cases/cases_from_DHSI2/disdata_mon.csv")
-# 
-# #pfpr_direc = setwd("C:/Users/ode3599/Box/NU-malaria-team/data/guinea_who/GUI_MAP_estimates/MAP_estimates/")
-# 
-# #pfpr_data = read_xlsx("district_summaries_GIN.xlsx", 3)
-# 
-# #pfpr_data_2018 = pfpr_data %>%dplyr::select(Region, District, map4_pfpr_2018, map4_pfpr_LCI_2018, map4_pfpr_UCI_2018)
-# 
-# Incidence_strat = read_xlsx("C:/Users/ode3599/Box/NU-malaria-team/data/guinea_cases/Endemicity_WHO_1.xlsx")
-# 
-# ### Cleaning climate data 
-# 
-# ## Recodage de climate_data$district
-# climate_data$district <- fct_recode(climate_data$district,
-#                                     "Boke" = "Bok\xe9",
-#                                     "Dubreka" = "Dubr\xe9ka",
-#                                     "Forecariah" = "For\xe9cariah",
-#                                     "Gueckedou" = "Gu\xe9ck\xe9dou",
-#                                     "Kerouane" = "K\xe9rouan\xe9",
-#                                     "Lelouma" = "L\xe9louma",
-#                                     "Labe" = "Lab\xe9",
-#                                     "Nzerekore" = "Nz\xe9r\xe9kor\xe9",
-#                                     "Telimele" = "T\xe9lim\xe9l\xe9",
-#                                     "Tougue" = "Tougu\xe9",
-#                                     "Yomou" = "Yamou"
-# )
-# 
-# ## Recodage de climate_data$region
-# climate_data$region <- fct_recode(climate_data$region,
-#                                   "Boke" = "Bok\xe9",
-#                                   "Labe" = "Lab\xe9",
-#                                   "Nzerekore" = "Nz\xe9r\xe9kor\xe9"
-# )
-# 
-# ## select climate for 2018
-# climate_data_2018 = climate_data %>%dplyr::filter(year == "2018")
-# ### summarise era and precipitation by year and districts
-# data_climate_2018_groupe <- climate_data_2018 %>%
-#   group_by (district) %>%
-#   dplyr::summarize(avg_precip_era5 = mean(precip_era5, na.rm =TRUE), avg_air_temp_era5 = mean(air_temp_era5))%>%
-#   dplyr::select(district, avg_precip_era5, avg_air_temp_era5)
-# 
-# data_climate_2018_groupe = dplyr::rename(data_climate_2018_groupe, NAME_2 = district, precipitation = avg_precip_era5, tempera = avg_air_temp_era5)
-# 
-# ## cleannig pfpr data (we have 5 districts in conakry, We just need to have whole conakry)
-# pfpr_conakry = pfpr_data_2018%>%dplyr::filter(Region == "Conakry")
-# 
-# pfpr_conakry = pfpr_conakry %>%
-#   group_by(Region) %>%
-#   dplyr::summarize(map4_pfpr_2018 = mean(map4_pfpr_2018, na.rm = T), map4_pfpr_LCI_2018 = mean(map4_pfpr_LCI_2018, na.rm = T),
-#                    map4_pfpr_UCI_2018 = mean(map4_pfpr_UCI_2018, na.rm = T)) %>%
-#   dplyr::select(Region, map4_pfpr_2018, map4_pfpr_LCI_2018, map4_pfpr_UCI_2018)
-# 
-# pfpr_conakry$District = rep("Conakry", 1)
-# 
-# #pfpr_data_2018_with_conakry = sqldf("select * from pfpr_data_2018 where Region %in% (Boke, Faranah, Kindia, Kankan, Mamou, Nzerekore)")
-# 
-# pfpr_data_2018_with_conakry = pfpr_data_2018 %>% dplyr::filter(Region %in% c("Boke", "Faranah", "Kankan", "Kindia", "Labe", "Mamou", "Nzerekore"))
-# 
-# pfpr_data_2018_with_conakry = rbind(pfpr_data_2018_with_conakry, pfpr_conakry)
-# 
-# pfpr_data_2018_with_conakry = dplyr::rename(pfpr_data_2018_with_conakry, NAME_2 = District)
-
-
-#subsetting for ITN (persons slept there last night) 2018
-# dhs_2018 <- dhs[2]
-# 
-# #dhs_2018 = as.data.frame(dhs_2018)
-# 
-# #dhs_hh_2018 = dhs_hhs[[4]]
-# ## Recodage de dhs_2018$NAME_2
-# dhs_2018$NAME_2 <- fct_recode(dhs_2018$NAME_2,
-#                               "Boke" = "Bok?",
-#                               "Dubreka" = "Dubr?ka",
-#                               "Forecariah" = "For?cariah",
-#                               "Gueckedou" = "Gu?ck?dou",
-#                               "Kerouane" = "K?rouan?",
-#                               "Labe" = "Lab?",
-#                               "Lelouma" = "L?louma",
-#                               "Nzerekore" = "Nz?r?kor?",
-#                               "Telimele" = "T?lim?l?",
-#                               "Tougue" = "Tougu?",
-#                               "Yomou" = "Yamou"
-# )
-# 
-# ## Routine data 2018
-# ## Recodage de pfpr_data_2018_with_conakry$NAME_2
-# pfpr_data_2018_with_conakry$NAME_2 <- fct_recode(pfpr_data_2018_with_conakry$NAME_2,
-#                                                  "Telimele" = "Telemele"
-# )
-# 
-# 
-# routine_data_2018 = routine_data %>%dplyr::filter(year == "2018")
-# 
-# routine_data_2018_without_conakry = routine_data_2018 %>% dplyr::filter(adm1 %in% c("Boke", "Faranah", "Kankan", "Kindia", "Labe", "Mamou", "Nzerekore"))
-# 
-# routine_data_conakry = routine_data_2018 %>%dplyr::filter(adm1 == "Conakry")
-# 
-# routine_data_conakry = routine_data_conakry %>%
-#   group_by(adm1) %>%
-#   dplyr::summarize(conf = sum(conf, na.rm = T), pop = sum(pop, na.rm = T),
-#                    susp = sum(susp, na.rm = T)) %>%
-#   dplyr::select(adm1, conf, susp, pop)
-# 
-# 
-# 
-# #pfpr_conakry$District = rep("Conakry", 1)
-# ## Fusion all tables (Routine data, dhs, climate and Pfpr)
-# #routine_data = rename(routine_data, NAME_2 = adm2)
-# #all_data = merge(dhs_2018, Incidence_strat, by = "NAME_2")
-# #all_data = merge(all_data, pfpr_data_2018_with_conakry, by = "NAME_2")
-# all_data = merge(dhs_2018, data_climate_2018_groupe, by = "NAME_2")
-# 
-# 
-# #number of persons per household 
-# clusters_2018 <- all_data_fin %>% dplyr::group_by(hv001,hv002) %>% dplyr::summarise(num_persons = n()) 
-# 
-# hist_18= ggplot(clusters_2018, aes(x=num_persons))+
-#   geom_histogram(color="green", fill ='lightgreen')+
-#   theme_minimal()+
-#   labs(x = "Number of persons per Household", y = "Frequence")
-# 
-# 
-# hist_18
-### Selectionner toutes les variables
-## hv001 : Cluster number is the number identifying the sample point as used during the fieldwork
-## hv002 : Household number is the number identifying the hh within the cluster or sample point
-## hv009 : Total number of household members indicates the number of entries to be found
-## hv024 : region
-## hv025 : Place of residence (urban = 1 (0)& rural = 2 (1))
-## hv015 : Number of children 5 and under
-## hv104 : sex of the household member (1 = Male (0) and 2 = female (1))
-## hv105 : Age of the household member
-## hv106 : Highest level of education the household member attended
-## hv115 : Marital status of the household member
-## hv220 : Age of the head of household
-## hv227 : Household has at least one mosquito net
-## hml1  : Number of mosquito nets household owns
-## hml12 : type of bednets person slept under last night
-## hml16 : Corrected age from individual 
-## hc27  : sex of child
-## hml18  : pregnant status
-## ha66  : woman's highest educational level
-## Temperature : from CHIRPS data
-## Precipitation : from CHIRPS data
-## PfPR : from routine data
-## Incidence : from routine data
-
-
-#all_data_2018_analysis = all_data_fin %>% dplyr::select(hhid_PR, hv001, hv002, hv005_PR, hv021_PR, hv022_PR, hv024_PR, hv025_PR, hv014_PR, hv013_PR, hml12, hv220_PR, hv270_PR, hml16, hv104, hv105, hv115, hc27, ha54,
-#                                                    ha66,hv106, hml18, hv227_PR, hv009_PR, hml1_PR, hv103, PfPR, Incidence, precipitation, tempera)
-
-
-#all_data_2018_analysis = data_PR_HR %>% dplyr::select(hhid, hv001, hv002, hv005, hv021, hv022, hv024, hv025, hv014,hv220, hv270, hml16, hv104, hv105, hv115, hc27, ha54,
-#                                                      ha66,hv106, hml18, hv227, hv009, hv013, hv216, hml12, hml1, nommiimenage, potuse, hh_has_itn,access, access2,
-#                                                      hv103, Adjusted_inc, precipitation, tempera, region)
+##1. Read the datasets and select the variables to include in the ITN use among those with access 
 all_data_2018_analysis = read.csv('C:/Users/ode3599/Box/NU-malaria-team/data/guinea_dhs/data_analysis/master/data/data_PR/data_PR_HR.csv')
 
 all_data_2018_analysis = data_PR_HR %>% dplyr::select(hhid, hv001, hv002, hvidx, hv003, hv005, hv021, hv022, hv024, hv025, hv014,hv220, hv270, hml16, hv104, hv105, hv115, 
                                                       hc27, ha54,ha66,hv106, hml18, hv227, hv009, hv013, hv216, hml1, nommiimenage, potuse,potuse_ajusted, 
                                                       HH_at_least_one,ratio_HH_2,saturation,access,indi,access2,access3, net_use, net_use_among_access, defacto_pop)
-## -----------------------------------------
 
-## Create variable net use 
+
 
 all_data_2018_analysis = all_data_2018_analysis %>% 
   dplyr::mutate(urb = ifelse(hv025 == 1, "0", "1"),
@@ -282,6 +57,7 @@ all_data_2018_analysis = all_data_2018_analysis %>%
                 u5_hh = ifelse(hv014 > 0, "1", "0"),
                 rooms = ifelse(hv216 <=3, "1-3", ifelse(hv216 >=4 & hv216<=6, "4-6", ifelse(hv216>=7, "More than 7", ''))))
 
+#2. Reorder the level for the variables
 cols = c('net_use', 'urb', 'region', 'sex', 'wealth', 'Edu', 'hh_size', 'Marital', 'age', 'head_age',
          'ratio_HH_2', 'preg', 'u5_hh', 'rooms')
 
@@ -306,7 +82,7 @@ all_data_2018_analysis$wealth = relevel(all_data_2018_analysis$wealth, ref = "1"
 
 all_data_2018_analysis$Edu = mapvalues(all_data_2018_analysis$Edu, from = c("None", "primary", "High", "dont know"),
                                        to = c("0", "1", "2", "3"))
-#all_data_2018_analysis$Edu = as.factor(as.character(all_data_2018_analysis$Edu))
+
 
 all_data_2018_analysis$Edu = relevel(all_data_2018_analysis$Edu, ref = "2")
 
@@ -330,7 +106,7 @@ all_data_2018_analysis$rooms = relevel(all_data_2018_analysis$rooms, ref = "1-3"
 
 write.csv(all_data_2018_analysis, '/Users/ousmanediallo/Box/NU-malaria-team/data/guinea_dhs/data_analysis/master/data/data_PR/PR_data_cleaning.csv')
 
-### Only Use among those have access
+#3. select only use among those with access
 use_access_data = all_data_2018_analysis %>% dplyr::filter(access3 == 1)
 
 data_use_access = use_access_data %>% dplyr::select(hv005, hv021, hv022, net_use, sex, age, head_age, wealth, hh_size, urb, region, u5_hh, preg, Edu,
