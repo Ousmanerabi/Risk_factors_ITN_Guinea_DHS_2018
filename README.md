@@ -4,10 +4,8 @@ This repository holds the R code for running the analysis from "Factors associat
 
 # Description des repertoires
 
-Le repertoire "Indicators" contient les scripts pour calculer les différents indicators au niveau des ménages et au niveau individuel. Ces indicateurs sont décrits dans la méthodlogie de l'article.
-Le repertoire "Recoding" contient le script pour recoder les variables au niveau individuel. Les variables au niveau des ménages ont été recodées dans le repertoire "Indicators".
-Le repertoire "Ownership_anlysis" contient les scripts pour faire l'analyse bivariée et multivariée au niveau national et régional de la possession des MILDA par les ménages.
-Le repertoire "ITN_use_anlysis" contient les scripts pour faire l'analyse bivariée et multivariée au niveau national et régional de l'utilisation des ITN parmi ceux qui ont access.
+The "Indicators" folder contains the scripts for calculating the different indicators at the household and individual level. These indicators are described in the methodology of the article.
+The "Risk_factors" folder contains the script to perform bivariate, univariate and multivariate analysis of ITN ownership and use among those with access to ITNs at the household and individual level.
 
 # How to use
 1. Exceuter le repertoire "Indicators" pour a la fois recoder les variables selectionées au niveau des ménages et calculer les indicateurs au niveau des ménages et au niveau individuel.
