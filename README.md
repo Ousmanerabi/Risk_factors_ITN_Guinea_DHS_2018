@@ -16,5 +16,5 @@ The "Risk_factors_Analysis" folder contains the script to perform bivariate, uni
 
 ## For any issue about the code, please refer
 
-Ousmane DIALLO (ousmane.diallo1@northwestern.edu)
+Ousmane DIALLO at ousmane.diallo1@northwestern.edu
 
