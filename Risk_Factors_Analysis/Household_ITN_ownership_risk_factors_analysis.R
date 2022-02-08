@@ -25,29 +25,28 @@ models <- explanatory_vars %>%       # begin with variables of interest
   
   # iterate through each univariate formula
   map(                               
-    .f = ~svyglm(                       # pass the formulas one-by-one to glm()
-      formula = as.formula(.x),      # within glm(), the string formula is .x
-      family = "binomial",           # specify type of glm (logistic)
-      design = design_sample_hh)) %>%          # dataset
+    .f = ~svyglm(                      
+      formula = as.formula(.x),      
+      family = "binomial",           
+      design = design_sample_hh)) %>%       
   
-  # tidy up each of the glm regression outputs from above
+
   map(
     .f = ~tidy(
       .x, 
-      exponentiate = TRUE,           # exponentiate 
-      conf.int = TRUE)) %>%          # return confidence intervals
+      exponentiate = TRUE,           
+      conf.int = TRUE)) %>%         
   
-  # collapse the list of regression outputs in to one data frame
+ 
   bind_rows() %>% 
   
-  # round all numeric columns
   mutate(across(where(is.numeric), round, digits = 2))
 
 models
 
 ## 4.2 Univariate analysis of different risk factors for ITN ownership at the regional level 
 
-region_vars = c("Boké", "Kankan", "Kindia", "Mamou", "Labé", "Faranah", "Conakry", "Nzerekore")
+region_vars = c("BokÃ©", "Kankan", "Kindia", "Mamou", "LabÃ©", "Faranah", "Conakry", "Nzerekore")
 models_region = function(survey.design, region_vars){
   region = region_vars[i]
   design_sample_v = subset(survey.design, region %in% region_vars)
@@ -55,21 +54,21 @@ models_region = function(survey.design, region_vars){
     str_c("HH_at_least_one ~ ", .) %>%  
     
     map(                               
-      .f = ~svyglm(                       # pass the formulas one-by-one to glm()
-        formula = as.formula(.x),      # within glm(), the string formula is .x
-        family = "binomial",           # specify type of glm (logistic)
+      .f = ~svyglm(                       
+        formula = as.formula(.x),      
+        family = "binomial",           
         design = design_sample_v))
-  # tidy up each of the glm regression outputs from above
+  
   map(
     .f = ~tidy(
       .x, 
-      exponentiate = TRUE,           # exponentiate 
-      conf.int = TRUE)) %>%          # return confidence intervals
+      exponentiate = TRUE,            
+      conf.int = TRUE)) %>%          
     
-    # collapse the list of regression outputs in to one data frame
+    
     bind_rows() %>% 
     
-    # round all numeric columns
+ 
     mutate(across(where(is.numeric), round, digits = 2))
   
 }
@@ -85,7 +84,7 @@ reg_hh_final = svyglm(HH_at_least_one ~ urb + hh_size +  Marital +  Edu + head_a
                       design = design_sample_hh, family = binomial())
 odds.ratio(reg_hh_final)
 # 5.2 For each region
-# 5.2.1 Boké region
+# 5.2.1 BokÃ© region
 hh_design_boke = subset(design_sample_hh, region=="Boke")
 
 reg_boke = svyglm(HH_at_least_one~ urb + rooms + hh_size + Num_childre + Marital + sex + Edu + head_age + wealth,
@@ -145,7 +144,7 @@ reg_kan_fina = svyglm(HH_at_least_one ~ hh_size + Num_childre, design = hh_desig
 
 odds.ratio(reg_kan_fina)
 
-# 5.2.5 Labé region
+# 5.2.5 LabÃ© region
 hh_design_labe = subset(design_sample_hh, region=="Labe")
 
 reg_labe = svyglm(HH_at_least_one~ urb + rooms + hh_size + Num_childre + sex + Edu + head_age + wealth,
@@ -176,7 +175,7 @@ odds.ratio(reg_mam_fina)
 
 
 
-# 5.2.7 N'zérékoré region
+# 5.2.7 N'zÃ©rÃ©korÃ© region
 hh_design_zere = subset(design_sample_hh, region=="Nzerekore")
 
 reg_zere = svyglm(HH_at_least_one~ urb + rooms + hh_size + Num_childre + sex + Edu + head_age + wealth,
