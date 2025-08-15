@@ -26,18 +26,27 @@ The objective was to identify household and individual-level determinants of ITN
 ---
 
 ## Repository Structure
-Indicators/ # Scripts for calculating household and individual-level indicators
-Household_and_individual_level_indicators.R
-Recoding of variables in the PR file.R
 
-Risk_factors_Analysis/ # Scripts for bivariate, univariate, and multivariate analysis
-Househod_ITN_ownership_risk_factors.R
-ITN_use_among_with_access_risk_factors.R
+### Indicators/
+Scripts for calculating household and individual-level ITN indicators.
 
-yaml
-Copier
-Modifier
+- **Household_and_individual_level_indicators.R**  
+  Recode variables at the household level and calculate ITN indicators for both household and individual levels.
 
+- **Recoding_of_variables_in_the_PR_file.R**  
+  Perform additional recoding for variables in the PR dataset.
+
+---
+
+### Risk_factors_Analysis/
+Scripts for performing bivariate, univariate, and multivariate analyses.
+
+- **Househod_ITN_ownership_risk_factors.R**  
+  Identify factors associated with ITN ownership at the household level.
+
+- **ITN_use_among_with_access_risk_factors.R**  
+  Identify factors associated with ITN use among individuals with access.
+  
 ---
 
 ## How to Use
