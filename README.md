@@ -2,7 +2,7 @@
 
 This repository holds the R code for running the analysis from "Factors associated to the use of insecticide-treated nets in Guinea: an analysis of the 2018 Demographic and Health Survey".
 
-# Description des repertoires
+# Repository
 
 The "Indicators" folder contains the scripts for calculating the different indicators at the household and individual level. These indicators are described in the methodology of the article.
 The "Risk_factors_Analysis" folder contains the script to perform bivariate, univariate and multivariate analysis of ITN ownership and use among those with access to ITNs at the household and individual level.
