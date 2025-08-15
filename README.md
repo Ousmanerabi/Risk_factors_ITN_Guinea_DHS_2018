@@ -3,14 +3,10 @@
 
 ---
 
-<<<<<<< HEAD
 ## Overview
 This repository contains the R code and analysis pipeline for the article:  
 **"Factors associated with the use of insecticide-treated nets in Guinea: an analysis of the 2018 Demographic and Health Survey"**.  
 The objective was to identify household and individual-level determinants of ITN ownership and use, in order to inform national malaria prevention strategies.
-=======
-# Repository
->>>>>>> dbfd840b29de0a3705756d7fa62c89cfcb13c562
 
 ---
 
@@ -27,7 +23,6 @@ The objective was to identify household and individual-level determinants of ITN
 - Bivariate, univariate, and multivariate models
 - Analysis performed in **R**
 
-<<<<<<< HEAD
 ---
 
 ## Repository Structure
